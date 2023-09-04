@@ -14,7 +14,7 @@ our $metadata = {
     description     => 'Remove any space character in item barcode',
     date_authored   => '2023-09-04',
     date_updated    => '2023-09-04',
-    minimum_version => '20.11',
+    minimum_version => '21.11',
     maximum_version => undef,
     version         => $VERSION,
 };
@@ -51,14 +51,16 @@ sub uninstall {
     return 1;
 }
 
+# See sample t/lib/plugins/Koha/Plugin/TestItemBarcodeTransform.pm
 sub item_barcode_transform {
-    my ( $self, $barcode ) = @_;
+    my ( $self, $barcode_ref ) = @_;
 
-    return $barcode unless $barcode;
+    my $barcode_val = $$barcode_ref;
+    if ($barcode_val) {
+        $barcode_val =~ s/\s//g;
+        $$barcode_ref = $barcode_val;
+    }
 
-    $barcode =~ s/\s//g; # Remove any space
-
-    return $barcode;
 }
 
 1;
